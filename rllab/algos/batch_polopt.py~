@@ -4,9 +4,7 @@ from rllab.sampler.base import BaseSampler
 import rllab.misc.logger as logger
 import rllab.plotter as plotter
 from rllab.policies.base import Policy
-## ======
-import time
-## ======
+
 
 class BatchSampler(BaseSampler):
     def __init__(self, algo):
@@ -134,7 +132,7 @@ class BatchPolopt(RLAlgorithm):
                 logger.dump_tabular(with_prefix=False)
                 if self.plot:
                     self.update_plot()
-                    logger.log("updating plot...")
+		    logger.log("updating plot...")
                     if self.pause_for_plot:
                         input("Plotting evaluation run: Press Enter to "
                                   "continue...")
@@ -164,6 +162,5 @@ class BatchPolopt(RLAlgorithm):
         raise NotImplementedError
 
     def update_plot(self):
-        logger.log(str(self.plot))
         if self.plot:
             plotter.update_plot(self.policy, self.max_path_length)

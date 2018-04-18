@@ -14,6 +14,9 @@ def rollout(env, agent, max_path_length=np.inf, animated=False, speedup=1,
     o = env.reset()
     agent.reset()
     path_length = 0
+    ## ========
+    logger.log(str(animated))
+    ## ========
     if animated:
         env.render()
     while path_length < max_path_length:

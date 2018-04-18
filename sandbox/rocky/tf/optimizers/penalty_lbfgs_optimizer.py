@@ -92,7 +92,6 @@ class PenaltyLbfgsOptimizer(Serializable):
         return self._opt_fun["f_constraint"](*inputs)
 
     def optimize(self, inputs):
-
         inputs = tuple(inputs)
 
         try_penalty = np.clip(

@@ -6,7 +6,10 @@ import tensorflow as tf
 from sandbox.rocky.tf.samplers.batch_sampler import BatchSampler
 from sandbox.rocky.tf.samplers.vectorized_sampler import VectorizedSampler
 from rllab.sampler.utils import rollout
-
+## ======
+import rllab.plotter as plotter
+from multiprocessing import Process
+## ======
 
 class BatchPolopt(RLAlgorithm):
     """
@@ -88,6 +91,10 @@ class BatchPolopt(RLAlgorithm):
 
     def start_worker(self):
         self.sampler.start_worker()
+        ## =======
+        if self.plot:
+            plotter.init_plot_tf(self.env)
+        ## =======
 
     def shutdown_worker(self):
         self.sampler.shutdown_worker()
@@ -103,7 +110,12 @@ class BatchPolopt(RLAlgorithm):
         if sess is None:
             sess = tf.Session()
             sess.__enter__()
-            
+
+        ## ========
+        # test_process = Process(target=test_worker)
+        # test_process.start()
+        ## ========
+
         sess.run(tf.global_variables_initializer())
         self.start_worker()
         start_time = time.time()
@@ -128,7 +140,10 @@ class BatchPolopt(RLAlgorithm):
                 logger.record_tabular('ItrTime', time.time() - itr_start_time)
                 logger.dump_tabular(with_prefix=False)
                 if self.plot:
-                    rollout(self.env, self.policy, animated=True, max_path_length=self.max_path_length)
+                    ## =======
+                    policy_data = self.policy.get_param_values()
+                    self.update_plot(policy_data)
+                    # rollout(self.env, self.policy, animated=True, max_path_length=self.max_path_length)
                     if self.pause_for_plot:
                         input("Plotting evaluation run: Press Enter to "
                               "continue...")
@@ -158,3 +173,10 @@ class BatchPolopt(RLAlgorithm):
     def optimize_policy(self, itr, samples_data):
         raise NotImplementedError
 
+    ## ========
+    def update_plot(self, policy_data):
+        logger.log(str(self.plot))
+        logger.log(str(self.max_path_length))
+        if self.plot:
+            plotter.update_plot_with_pure_policy(policy_data, self.max_path_length)
+    ## ========

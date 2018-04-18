@@ -11,7 +11,6 @@ from _ast import Num
 
 
 class PerlmutterHvp(Serializable):
-
     def __init__(self, num_slices=1):
         Serializable.quick_init(self, locals())
         self.target = None

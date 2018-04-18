@@ -2,6 +2,9 @@ from contextlib import contextmanager
 
 from rllab.core.serializable import Serializable
 from rllab.misc.tensor_utils import flatten_tensors, unflatten_tensors
+## =======
+import rllab.misc.logger as logger
+## =======
 
 load_params = True
 
@@ -52,6 +55,7 @@ class Parameterized(Serializable):
         return self._cached_param_shapes[tag_tuple]
 
     def get_param_values(self, **tags):
+        logger.log("In getting param values...")
         return flatten_tensors(
             [param.get_value(borrow=True)
              for param in self.get_params(**tags)]

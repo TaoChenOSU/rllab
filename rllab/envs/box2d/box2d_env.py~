@@ -346,7 +346,7 @@ class Box2DEnv(Env):
 
     @overrides
     def render(self, states=None, actions=None, pause=False):
-        # logger.log("In render method...")
+        logger.log("In render method...")
         if not self.viewer:
             self.viewer = Box2DViewer(self.world)
         if states or actions or pause:

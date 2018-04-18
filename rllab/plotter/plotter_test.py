@@ -11,8 +11,6 @@ from sandbox.rocky.tf.policies.gaussian_mlp_policy import GaussianMLPPolicy
 __all__ = [
     'init_worker',
     'init_plot',
-    'init_plot_tf',
-    'update_plot',
     'update_plot_with_pure_policy'
 ]
 
@@ -36,15 +34,13 @@ def _worker_start():
                     break
             if 'stop' in msgs:
                 ## ========
-                # logger.log("In stop...")
+                logger.log("In stop...")
                 ## ========
                 break
             elif 'update' in msgs:
-                env, policy = msgs['update']
-            elif 'update_tf' in msgs:
                 ## ========
-                # logger.log("In update...")
-                env = msgs['update_tf'][0]
+                logger.log("In update...")
+                env = msgs['update'][0]
                 policy = GaussianMLPPolicy(
             	    name="policy",
             	    env_spec=env.spec,
@@ -53,17 +49,17 @@ def _worker_start():
             	)
             elif 'demo' in msgs:
                 ## ========
-                # logger.log("In demo")
+                logger.log("In demo")
                 ## ========
                 param_values, max_length = msgs['demo']
                 policy.set_param_values(param_values)
                 rollout(env, policy, max_path_length=max_length, animated=True, speedup=5)
                 ## ============
             elif 'pure_policy' in msgs:
-                # logger.log("In pure policy")
+                logger.log("In pure policy")
                 pure_policy_data, max_length = msgs['pure_policy']
                 policy.set_param_values(pure_policy_data)
-                # logger.log(str(pure_policy_data))
+                logger.log(str(pure_policy_data))
                 rollout(env, policy, max_path_length=max_length, animated=True, speedup=5)
                 ## ============
             else:
@@ -86,19 +82,15 @@ def init_worker():
     process = Process(target=_worker_start)
     process.start()
     atexit.register(_shutdown_worker)
-    # logger.log("Plot worker started")
+    logger.log("Plot worker started")
+
 
 def init_plot(env, policy):
-    queue.put(['update', env, policy])
-
-def update_plot(policy, max_length=np.inf):
-    queue.put(['demo', policy.get_param_values(), max_length])
-
-## =======
-def init_plot_tf(env):
-    # logger.log("Plot init...")
-    queue.put(['update_tf', env])
-## =======
+    ## =======
+    logger.log("Plot init...")
+    queue.put(['update', env])
+    ## =======
+    # queue.put(['update', env, policy])
 
 ## ===========
 def update_plot_with_pure_policy(policy_data, max_length=np.inf):
