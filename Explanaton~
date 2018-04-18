@@ -1,0 +1,26 @@
+  Issue: Asynchronous 3D rendering is not supported in the Tensorflow-based rllab.
+  After a couple days of research (staring at the code) and tried out numerous methods, I think I have found
+the cause:
+  The "render" subroutine requires the policy object to be able to animate. However, the policy object in
+the Tnesorflow-based rllab cannot be shared between multiple threads. (I couldn't figure out why unfortunately.)
+
+  I found out that passing the entire policy object to the plotter was not necessary. All the plotter needs is the data
+contained within the policy object, which in the case of the cart pole example, was the Gaussian ML Policy. 
+So what I did was created two subroutines in the plotter module to work with pure data from policy. If it's the Tensorflow
+training module calling the plotter, the plotter will create a policy contained within itself such that it wouldn't interfere
+with the policy that's used in the training. And then pass the policy data obtained from the training loop to the policy used to 
+render. In the parameterized.py module, setting the policy data requires running a Tensorflow session. But running the session that
+lives in the training thread is not allowed (tf.get_default_session returns None). So I created a new session in the plotter thread. 
+(I don't know why it works however.)
+
+  The result appeared to address the issue. Both the Theano-based and Tensorflow-based rllab now support asynchronous plotting. And they now
+spend about the same amount of time in one trainning session.
+
+  The changes were made using the method of trial and error. So it might not be the most elegant way to solve the issue and it might not be
+general. I'd like to submit what I have currently and have a code review. Since I will have 2 finals next week. I am not sure if I will have
+time to work on this anymore. But if you want me to make this more general and work on all examples, I am more than happy to do that! 
+
+  (Currently, it only works on the trpo_cartpole.py example as I hardcoded the policy in the plotter. All the examples using Theano will still
+work tho.)
+
+  Tao
