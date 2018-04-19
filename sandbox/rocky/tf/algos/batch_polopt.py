@@ -21,6 +21,9 @@ class BatchPolopt(RLAlgorithm):
             self,
             env,
             policy,
+            ## =========
+            policy_parameters,
+            ## =========
             baseline,
             scope=None,
             n_itr=500,
@@ -64,6 +67,9 @@ class BatchPolopt(RLAlgorithm):
         """
         self.env = env
         self.policy = policy
+        ## ========
+        self.policy_parameters = policy_parameters
+        ## ========
         self.baseline = baseline
         self.scope = scope
         self.n_itr = n_itr
@@ -93,7 +99,7 @@ class BatchPolopt(RLAlgorithm):
         self.sampler.start_worker()
         ## =======
         if self.plot:
-            plotter.init_plot_tf(self.env)
+            plotter.init_plot_tf(self.env, self.policy_parameters)
         ## =======
 
     def shutdown_worker(self):

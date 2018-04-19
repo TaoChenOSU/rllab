@@ -14,13 +14,7 @@ import tensorflow as tf
 class CategoricalConvPolicy(StochasticPolicy, LayersPowered, Serializable):
     def __init__(
             self,
-            name,
-            env_spec,
-            conv_filters, conv_filter_sizes, conv_strides, conv_pads,
-            hidden_sizes=[],
-            hidden_nonlinearity=tf.nn.relu,
-            output_nonlinearity=tf.nn.softmax,
-            prob_network=None,
+            policy_parameters
     ):
         """
         :param env_spec: A spec for the mdp.
@@ -30,6 +24,17 @@ class CategoricalConvPolicy(StochasticPolicy, LayersPowered, Serializable):
         are ignored
         :return:
         """
+        name = policy_parameters["name"]
+        env_spec = policy_parameters["env_spec"]
+        conv_filters = policy_parameters["conv_filters"]
+        conv_filter_sizes = policy_parameters["conv_filter_sizes"]
+        conv_strides = policy_parameters["conv_strides"]
+        conv_pads = policy_parameters["conv_pads"]
+        hidden_sizes = policy_parameters["hidden_sizes"] if "hidden_sizes" in policy_parameters else []
+        hidden_nonlinearity = policy_parameters["hidden_nonlinearity"] if "hidden_nonlinearity" in policy_parameters else tf.nn.relu
+        output_nonlinearity = policy_parameters["output_nonlinearity"] if "output_nonlinearity" in policy_parameters else tf.nn.softmax
+        prob_network = policy_parameters["prob_network"] if "prob_network" in policy_parameters else None
+
         Serializable.quick_init(self, locals())
 
         assert isinstance(env_spec.action_space, Discrete)

@@ -11,18 +11,21 @@ from rllab.misc.instrument import stub, run_experiment_lite
 def run_task(*_):
 	env = TfEnv(normalize(CartpoleEnv()))
 
-	policy = GaussianMLPPolicy(
-	    name="policy",
-	    env_spec=env.spec,
-	    # The neural network policy should have two hidden layers, each with 32 hidden units.
-	    hidden_sizes=(32, 32)
-	)
+	policy_parameters = {
+		"name": "policy",
+	    "env_spec": env.spec,
+	    "policy_type": GaussianMLPPolicy,
+	    "hidden_sizes": (32, 32)
+	}
+
+	policy = GaussianMLPPolicy(policy_parameters)
 
 	baseline = LinearFeatureBaseline(env_spec=env.spec)
 
 	algo = TRPO(
 	    env=env,
 	    policy=policy,
+	    policy_parameters=policy_parameters,
 	    baseline=baseline,
 	    batch_size=4000,
 	    max_path_length=100,

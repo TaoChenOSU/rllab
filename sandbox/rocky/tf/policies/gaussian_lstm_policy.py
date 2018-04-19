@@ -14,17 +14,7 @@ from rllab.misc.overrides import overrides
 class GaussianLSTMPolicy(StochasticPolicy, LayersPowered, Serializable):
     def __init__(
             self,
-            name,
-            env_spec,
-            hidden_dim=32,
-            feature_network=None,
-            state_include_action=True,
-            hidden_nonlinearity=tf.tanh,
-            learn_std=True,
-            init_std=1.0,
-            output_nonlinearity=None,
-            lstm_layer_cls=L.LSTMLayer,
-            use_peepholes=False,
+            policy_parameters
     ):
         """
         :param env_spec: A spec for the env.
@@ -32,6 +22,19 @@ class GaussianLSTMPolicy(StochasticPolicy, LayersPowered, Serializable):
         :param hidden_nonlinearity: nonlinearity used for each hidden layer
         :return:
         """
+
+        name = policy_parameters["name"]
+        env_spec = policy_parameters["env_spec"]
+        hidden_dim = policy_parameters["hidden_dim"] if "hidden_dim" in policy_parameters else 32
+        feature_network = policy_parameters["feature_network"] if "feature_network" in policy_parameters else None
+        state_include_action = policy_parameters["state_include_action"] if "state_include_action" in policy_parameters else True
+        hidden_nonlinearity = policy_parameters["hidden_nonlinearity"] if "hidden_nonlinearity" in policy_parameters else tf.tanh
+        learn_std = policy_parameters["learn_std"] if "learn_std" in policy_parameters else True
+        init_std = policy_parameters["init_std"] if "init_std" in policy_parameters else 1.0
+        output_nonlinearity = policy_parameters["output_nonlinearity"] if "output_nonlinearity" in policy_parameters else None
+        lstm_layer_cls = policy_parameters["lstm_layer_cls"] if "lstm_layer_cls" in policy_parameters else L.LSTMLayer
+        use_peepholes = policy_parameters["use_peepholes"] if "use_peepholes" in policy_parameters else False
+
         with tf.variable_scope(name):
             Serializable.quick_init(self, locals())
             super(GaussianLSTMPolicy, self).__init__(env_spec)

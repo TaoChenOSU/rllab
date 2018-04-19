@@ -1,1 +1,10 @@
-
+# __init__.py
+from .categorical_conv_policy import CategoricalConvPolicy
+from .categorical_gru_policy import CategoricalGRUPolicy
+from .categorical_lstm_policy import CategoricalLSTMPolicy
+from .categorical_mlp_policy import CategoricalMLPPolicy
+from .deterministic_mlp_policy import DeterministicMLPPolicy
+from .gaussian_gru_policy import GaussianGRUPolicy
+from .gaussian_lstm_policy import GaussianLSTMPolicy
+from .gaussian_mlp_policy import GaussianMLPPolicy
+from .uniform_control_policy import UniformControlPolicy

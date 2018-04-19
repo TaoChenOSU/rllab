@@ -17,13 +17,17 @@ import tensorflow as tf
 class DeterministicMLPPolicy(Policy, LayersPowered, Serializable):
     def __init__(
             self,
-            name,
-            env_spec,
-            hidden_sizes=(32, 32),
-            hidden_nonlinearity=tf.nn.relu,
-            output_nonlinearity=tf.nn.tanh,
-            prob_network=None,
-            bn=False):
+            policy_parameters
+        ):
+
+        name = policy_parameters["name"]
+        env_spec = policy_parameters["env_spec"]
+        hidden_sizes = policy_parameters["hidden_sizes"] if "hidden_sizes" in policy_parameters else (32, 32)
+        hidden_nonlinearity = policy_parameters["hidden_nonlinearity"] if "hidden_nonlinearity" in policy_parameters else tf.nn.relu
+        output_nonlinearity = policy_parameters["output_nonlinearity"] if "output_nonlinearity" in policy_parameters else tf.nn.tanh
+        prob_network = policy_parameters["prob_network"] if "prob_network" in policy_parameters else None
+        bn = policy_parameters["bn"] if "bn" in policy_parameters else False
+
         Serializable.quick_init(self, locals())
 
         with tf.variable_scope(name):
@@ -57,7 +61,7 @@ class DeterministicMLPPolicy(Policy, LayersPowered, Serializable):
     @property
     def vectorized(self):
         return True
-        
+
     @overrides
     def get_action(self, observation):
         flat_obs = self.observation_space.flatten(observation)

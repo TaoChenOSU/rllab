@@ -14,11 +14,7 @@ import tensorflow as tf
 class CategoricalMLPPolicy(StochasticPolicy, LayersPowered, Serializable):
     def __init__(
             self,
-            name,
-            env_spec,
-            hidden_sizes=(32, 32),
-            hidden_nonlinearity=tf.nn.tanh,
-            prob_network=None,
+            policy_parameters
     ):
         """
         :param env_spec: A spec for the mdp.
@@ -28,6 +24,12 @@ class CategoricalMLPPolicy(StochasticPolicy, LayersPowered, Serializable):
         are ignored
         :return:
         """
+        name = policy_parameters["name"]
+        env_spec = policy_parameters["env_spec"]
+        hidden_sizes = policy_parameters["hidden_sizes"] if "hidden_sizes" in policy_parameters else (32, 32)
+        hidden_nonlinearity = policy_parameters["hidden_nonlinearity"] if "hidden_nonlinearity" in policy_parameters else tf.nn.tanh
+        prob_network = policy_parameters["prob_network"] if "prob_network" in policy_parameters else None
+
         Serializable.quick_init(self, locals())
 
         assert isinstance(env_spec.action_space, Discrete)

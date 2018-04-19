@@ -17,21 +17,7 @@ import tensorflow as tf
 class GaussianMLPPolicy(StochasticPolicy, LayersPowered, Serializable):
     def __init__(
             self,
-            name,
-            env_spec,
-            hidden_sizes=(32, 32),
-            learn_std=True,
-            init_std=1.0,
-            adaptive_std=False,
-            std_share_network=False,
-            std_hidden_sizes=(32, 32),
-            min_std=1e-6,
-            std_hidden_nonlinearity=tf.nn.tanh,
-            hidden_nonlinearity=tf.nn.tanh,
-            output_nonlinearity=None,
-            mean_network=None,
-            std_network=None,
-            std_parametrization='exp'
+            policy_parameters
     ):
         """
         :param env_spec:
@@ -52,6 +38,23 @@ class GaussianMLPPolicy(StochasticPolicy, LayersPowered, Serializable):
             - softplus: the std will be computed as log(1+exp(x))
         :return:
         """
+
+        name = policy_parameters["name"]
+        env_spec = policy_parameters["env_spec"]
+        hidden_sizes = policy_parameters["hidden_sizes"] if "hidden_sizes" in policy_parameters else (32, 32)
+        learn_std = policy_parameters["learn_std"] if "learn_std" in policy_parameters else True
+        init_std = policy_parameters["init_std"] if "init_std" in policy_parameters else 1.0
+        adaptive_std = policy_parameters["adaptive_std"] if "adaptive_std" in policy_parameters else False
+        std_share_network = policy_parameters["std_share_network"] if "std_share_network" in policy_parameters else False
+        std_hidden_sizes = policy_parameters["std_hidden_sizes"] if "std_hidden_sizes" in policy_parameters else (32, 32)
+        min_std = policy_parameters["min_std"] if "min_std" in policy_parameters else 1e-6
+        std_hidden_nonlinearity = policy_parameters["std_hidden_nonlinearity"] if "std_hidden_nonlinearity" in policy_parameters else tf.nn.tanh
+        hidden_nonlinearity = policy_parameters["hidden_nonlinearity"] if "hidden_nonlinearity" in policy_parameters else tf.nn.tanh
+        output_nonlinearity = policy_parameters["output_nonlinearity"] if "output_nonlinearity" in policy_parameters else None
+        mean_network = policy_parameters["mean_network"] if "mean_network" in policy_parameters else None
+        std_network = policy_parameters["std_network"] if "std_network" in policy_parameters else None
+        std_parametrization = policy_parameters["std_parametrization"] if "std_parametrization" in policy_parameters else 'exp'
+
         Serializable.quick_init(self, locals())
         assert isinstance(env_spec.action_space, Box)
 

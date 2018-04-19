@@ -55,7 +55,7 @@ class Parameterized(Serializable):
         return self._cached_param_shapes[tag_tuple]
 
     def get_param_values(self, **tags):
-        logger.log("In getting param values...")
+        # logger.log("In getting param values...")
         return flatten_tensors(
             [param.get_value(borrow=True)
              for param in self.get_params(**tags)]

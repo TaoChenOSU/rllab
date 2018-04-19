@@ -5,7 +5,7 @@ from rllab.sampler.utils import rollout
 import numpy as np
 ## =======
 import rllab.misc.logger as logger
-from sandbox.rocky.tf.policies.gaussian_mlp_policy import GaussianMLPPolicy
+import sandbox.rocky.tf.policies
 ## =======
 
 __all__ = [
@@ -43,14 +43,8 @@ def _worker_start():
                 env, policy = msgs['update']
             elif 'update_tf' in msgs:
                 ## ========
-                # logger.log("In update...")
-                env = msgs['update_tf'][0]
-                policy = GaussianMLPPolicy(
-            	    name="policy",
-            	    env_spec=env.spec,
-            	    # The neural network policy should have two hidden layers, each with 32 hidden units.
-            	    hidden_sizes=(32, 32)
-            	)
+                env, policy_parameters = msgs['update_tf']
+                policy = policy_parameters["policy_type"](policy_parameters)
             elif 'demo' in msgs:
                 ## ========
                 # logger.log("In demo")
@@ -95,9 +89,9 @@ def update_plot(policy, max_length=np.inf):
     queue.put(['demo', policy.get_param_values(), max_length])
 
 ## =======
-def init_plot_tf(env):
+def init_plot_tf(env, policy_parameters):
     # logger.log("Plot init...")
-    queue.put(['update_tf', env])
+    queue.put(['update_tf', env, policy_parameters])
 ## =======
 
 ## ===========
