@@ -3,10 +3,8 @@ from queue import Empty
 from multiprocessing import Process, Queue
 from rllab.sampler.utils import rollout
 import numpy as np
-## =======
 import rllab.misc.logger as logger
 import sandbox.rocky.tf.policies
-## =======
 
 __all__ = [
     'init_worker',
@@ -35,31 +33,20 @@ def _worker_start():
                 except Empty:
                     break
             if 'stop' in msgs:
-                ## ========
-                # logger.log("In stop...")
-                ## ========
                 break
             elif 'update' in msgs:
                 env, policy = msgs['update']
             elif 'update_tf' in msgs:
-                ## ========
                 env, policy_parameters = msgs['update_tf']
                 policy = policy_parameters["policy_type"](policy_parameters)
             elif 'demo' in msgs:
-                ## ========
-                # logger.log("In demo")
-                ## ========
                 param_values, max_length = msgs['demo']
                 policy.set_param_values(param_values)
                 rollout(env, policy, max_path_length=max_length, animated=True, speedup=5)
-                ## ============
             elif 'pure_policy' in msgs:
-                # logger.log("In pure policy")
                 pure_policy_data, max_length = msgs['pure_policy']
                 policy.set_param_values(pure_policy_data)
-                # logger.log(str(pure_policy_data))
                 rollout(env, policy, max_path_length=max_length, animated=True, speedup=5)
-                ## ============
             else:
                 if max_length:
                     rollout(env, policy, max_path_length=max_length, animated=True, speedup=5)
@@ -80,7 +67,6 @@ def init_worker():
     process = Process(target=_worker_start)
     process.start()
     atexit.register(_shutdown_worker)
-    # logger.log("Plot worker started")
 
 def init_plot(env, policy):
     queue.put(['update', env, policy])
@@ -88,13 +74,8 @@ def init_plot(env, policy):
 def update_plot(policy, max_length=np.inf):
     queue.put(['demo', policy.get_param_values(), max_length])
 
-## =======
 def init_plot_tf(env, policy_parameters):
-    # logger.log("Plot init...")
     queue.put(['update_tf', env, policy_parameters])
-## =======
 
-## ===========
 def update_plot_with_pure_policy(policy_data, max_length=np.inf):
     queue.put(['pure_policy', policy_data, max_length])
-## ===========

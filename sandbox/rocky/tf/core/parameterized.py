@@ -3,9 +3,7 @@ from contextlib import contextmanager
 from rllab.core.serializable import Serializable
 from rllab.misc.tensor_utils import flatten_tensors, unflatten_tensors
 import tensorflow as tf
-## =======
 import rllab.misc.logger as logger
-## =======
 
 
 load_params = True
@@ -25,13 +23,11 @@ class Parameterized(object):
         self._cached_param_shapes = {}
         self._cached_assign_ops = {}
         self._cached_assign_placeholders = {}
-        ## =========
         ## replicate the tf session
         self.sess = tf.Session()
         self.sess.__enter__()
         self.sess.run(tf.global_variables_initializer())
-        ## =========
-
+       
     def get_params_internal(self, **tags):
         """
         Internal method to be implemented which does not perform caching
@@ -65,7 +61,6 @@ class Parameterized(object):
         return self._cached_param_shapes[tag_tuple]
 
     def get_param_values(self, **tags):
-        # logger.log("In getting param values...")
         params = self.get_params(**tags)
         param_values = tf.get_default_session().run(params)
         return flatten_tensors(param_values)

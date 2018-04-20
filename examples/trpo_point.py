@@ -5,7 +5,7 @@ from rllab.envs.normalized_env import normalize
 from rllab.policies.gaussian_mlp_policy import GaussianMLPPolicy
 from rllab.misc.instrument import stub, run_experiment_lite
 
-def run_tack(*_):
+def run_task(*_):
     env = normalize(PointEnv())
     policy = GaussianMLPPolicy(
         env_spec=env.spec,
